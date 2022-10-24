@@ -93,3 +93,12 @@ test_db_storage.py'])
         s.save()
         self.assertIs(s, models.storage.get(State, s.id))
         self.assertIs(None, models.storage.get(State, "fake_id"))
+
+    def test_count_method(self):
+        """Tests for count method"""
+        self.assertEqual(models.storage.count(State),
+                         len(models.storage.all(State)))
+        current = models.storage.count(State)
+        s = State(name="Texas")
+        s.save()
+        self.assertEqual(models.storage.count(State), current + 1)
