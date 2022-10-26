@@ -12,3 +12,4 @@ app_views = Blueprint(
 
 # Import everything from index.py, import after to avoid circular imports.
 from api.v1.views.index import *
+from api.v1.views.states import *
