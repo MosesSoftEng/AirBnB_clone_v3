@@ -12,16 +12,33 @@ from models.state import State
     methods=['GET', 'POST'],
     strict_slashes=False
 )
-def get_states():
-    """Return list of all states as json"""
+def states():
+    """Return a list of states"""
     if request.method == 'GET':
         return jsonify(
             [obj.to_dict() for obj in storage.all('State').values()]
+        ), 200
+    else:
+        data = request.get_json()
+
+        # validate
+        if type(data) != dict:
+            return jsonify({'error': 'Not a JSON'}), 400
+
+        if data.get('name') is None:
+            return jsonify({'error': 'Missing name'}), 400
+
+        state = State(**data)
+        state.save()
+
+        return jsonify(state.to_dict()), 201
+
+
 @app_views.route(
     '/states/<string:state_id>',
     methods=['PUT', 'GET', 'DELETE'],
     strict_slashes=False
-        )
+)
 def state(state_id):
     """Creates, retrieve or deletes a state"""
     state = storage.get(State, state_id)
