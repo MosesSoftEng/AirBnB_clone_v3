@@ -161,8 +161,121 @@ Second part of Airbnb: Joann Vuong
 ## License
 Public Domain. No copy write protection.
 
-## Setup Project
+# Tasks
+
+## 0. Restart from s.cratch!
+Set up codebase.
+
 ```bash
 # Clone base project.
 git colne https://github.com/alexaorrico/AirBnB_clone_v2.git AirBnB_clone_v3
+
+# Run tests
+clear; python3 -m unittest discover tests
 ```
+
+## 1. Never fail!
+
+```bash
+```
+
+## 2. Improve storage
+```bash
+touch test_get_count.py
+
+cat '#!/usr/bin/python3
+""" Test .get() and .count() methods
+"""
+from models import storage
+from models.state import State
+
+print("All objects: {}".format(storage.count()))
+print("State objects: {}".format(storage.count(State)))
+
+first_state_id = list(storage.all(State).values())[0].id
+print("First state: {}".format(storage.get(State, first_state_id)))' > test_get_count.py
+
+chmod +x test_get_count.py
+
+# Add dummy data
+echo 'create State name="California"' | HBNB_MYSQL_USER=hbnb_dev HBNB_MYSQL_PWD=hbnb_dev_pwd HBNB_MYSQL_HOST=localhost HBNB_MYSQL_DB=hbnb_dev_db HBNB_TYPE_STORAGE=db ./console.py
+
+HBNB_MYSQL_USER=hbnb_dev HBNB_MYSQL_PWD=hbnb_dev_pwd HBNB_MYSQL_HOST=localhost HBNB_MYSQL_DB=hbnb_dev_db HBNB_TYPE_STORAGE=db ./test_get_count.py 
+
+```
+
+## 3. Status of your API
+```bash
+mkdir api
+touch api/__init__.py
+
+mkdir -p api/v1
+touch api/v1/__init__.py
+touch api/v1/app.py
+mkdir -p api/v1/views
+touch api/v1/views/index.py
+touch api/v1/views/__init__.py
+
+sudo service mysql start
+
+pep8 api/v1/app.py
+pep8 api/v1/views/__init__.py
+pep8 api/v1/views/index.py
+```
+
+### Tests
+```bash
+# Terminal A
+# Set environment variables
+HBNB_MYSQL_USER=hbnb_dev HBNB_MYSQL_PWD=hbnb_dev_pwd HBNB_MYSQL_HOST=localhost HBNB_MYSQL_DB=hbnb_dev_db HBNB_TYPE_STORAGE=db HBNB_API_HOST=0.0.0.0 HBNB_API_PORT=5000
+
+# Run flask app
+python3 -m api.v1.app
+
+# Terminal B
+curl -X GET http://0.0.0.0:5000/api/v1/status
+{
+  "status": "OK"
+}
+
+curl -X GET -s http://0.0.0.0:5000/api/v1/status -vvv 2>&1 | grep Content-Type
+< Content-Type: application/json
+```
+
+## [4. Some stats?](api/v1/views/index.py)
+Create route: /api/v1/stats an endpoint that retrieves the number of each objects by type.
+
+route: /api/v1/stats
+
+### Tests
+```bash
+curl -X GET http://0.0.0.0:5000/api/v1/stats
+{
+  "amenities": 47, 
+  "cities": 36, 
+  "places": 154, 
+  "reviews": 718, 
+  "states": 27, 
+  "users": 31
+}
+```
+
+## [5. Not found](api/v1/app.py)
+Create a handler for 404 errors that returns a JSON-formatted 404 status code response.
+
+```bash
+curl -X GET http://0.0.0.0:5000/api/v1/nop
+```
+
+## [6. State](api/v1/views/states.py) [api/v1/views/__init__.py](api/v1/views/__init__.py)
+
+```bash
+touch api/v1/views/states.py
+
+
+pep8 api/v1/views/states.py
+```
+
+
+# :books: References
+1. [https://github.com/alexaorrico/AirBnB_clone_v2](https://github.com/alexaorrico/AirBnB_clone_v2)
